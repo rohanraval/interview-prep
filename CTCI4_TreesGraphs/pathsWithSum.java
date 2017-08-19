@@ -49,3 +49,55 @@ int numPaths(Node n, int sum, int target) {
     //return number of valid paths
     return totalPaths;
 }
+
+/*
+OPTIMAL SOLUTION: Instead of recomputing the O(log N) sums from every node, do it from the top level,
+then store the running sum in a hashtable to compare against target.
+
+As we visit each node:
+1. Track its runningSum. We'll take this in as a parameter and immediately increment it by node.value.
+2. Look up runningSum - targetSum in the hash table. The value there indicates the total number. Set
+totalPaths to this value.
+3. If runningSum == targetSum, then there's one additional path that starts at the root. Increment
+totalPaths.
+4. Add runningSum to the hash table (incrementing the value if it's already there).
+5. Recurse left and right, counting the number of paths with sum targetSum.
+6. After we're done recursing left and right, decrement the value of runningSum in the hash table. This is
+essentially backing out of our work; it reverses the changes to the hash table so that other nodes don't
+use it (since we're now done with node). 
+*/
+
+int getPathsWithSum(Node root, int target) {
+    return numPaths(root, target, 0, new HashMap<Integer, Integer>());
+}
+
+int numPaths(Node n, int target, int runningSum, HashMap<Integer, Integer> pathCount) {
+    //base case
+    if (n == null) {
+        return 0;
+    }
+
+    //count paths with sum ending at current node
+    runningSum += node.data;
+    int sum = runningSum - targetSum;
+    int totalPaths = pathCount.getOrDefault(sum, 0);
+
+    //if runningSum = target, then one additional path starts at root
+    if (runningSum == target) {
+        totalPaths++;
+    }
+
+    //increment pathCount
+    int newCount = pathCount.getOrDefault(runningSum, 0) + 1;
+    pathCount.put(runningSum, newCount);
+
+    //recurse
+    totalPaths += numPaths(node.left, target, runningSum, pathCount);
+    totalPaths += numPaths(node.right, target, runningSum, pathCount);  
+
+    //decrement pathCount  
+    int newCount = pathCount.getOrDefault(runningSum, 0) - 1;
+    pathCount.put(runningSum, newCount);
+
+    return totalPaths;
+}
