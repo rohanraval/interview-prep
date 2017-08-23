@@ -9,7 +9,7 @@
 def tripleStep(n):
     # base case
     if n == 0 or n == 1:
-        return n;
+        return n
     # recurse on each of the 3 possibilities, then add (constant time)
     return tripleStep(n-1) + tripleStep(n-2) + tripleStep(n-3)
 
